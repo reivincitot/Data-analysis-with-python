@@ -6,7 +6,7 @@ import matplotlib as plt
 path = "D:/Curso ibm/Data analysis with python/automovil-dataset.csv"
 
 # creando headers para el data frame con el que se trabajara
-headers1 = "symboling normalized-losses make fuel-type aspiration num-of-doors body-style drive-weels engine-location weel-base length width height curb-weight engine-type num-of-cylinders engine-size fuel-system bore stroke compression-ratio horsepower peak-rpm city-mpg, highway-mpg price"
+headers1 = "symboling normalized-losses make fuel-type aspiration num-of-doors body-style drive-weels engine-location weel-base length width height curb-weight engine-type num-of-cylinders engine-size fuel-system bore stroke compression-ratio horsepower peak-rpm city-mpg highway-mpg price"
 
 # Separando los headers para que sean asignados a cada columna
 headers = headers1.split(" ")
@@ -114,7 +114,7 @@ print(df["num-of-doors"].value_counts())
 print('Podemos ver que las cuatro puertas son el tipo mas común. Tambien podemos usar el metodo ".idemax()" para calcular el tipo mas comun')
 print(df["num-of-doors"].value_counts().idxmax())
 print('\nEl procedimiento de reemplazo es el mismo')
-df['num-of-doors'].replace(np.nan,"four", inplace=True)
+df['num-of-doors'].replace(np.nan, "four", inplace=True)
 
 print('Finalmente desecharemos las columnas que no tienen ningún valor')
 df.dropna(subset=["price"], axis=0, inplace=True)
@@ -123,3 +123,30 @@ df.reset_index(drop=True, inplace=True)
 
 print(df.head())
 print('\nCorregir el formato de la información')
+print('\nel ultimo paso en limpiar la información es asegurarnos que toda la información tenga el formato correcto (int,float,text u otro), en panda usamos: \n.dtype() para verificar el tipo de dato\n.astype() para cambiar el tipo de dato\n')
+print(df.dtypes)
+print('\nComo podemos ver arriba, algunas columnas no tiene el tipo correcto de dato.Variables numéricas deberían tener el tipo "float" o "int", variables con string deberían tener la categoría object, por ejemplo: "bore" y "stroke" son valores numéricos que describen el motor, asi que deberíamos esperar un tipo "float" o un tipo "int" pero son mostrados como tipo "object". Tenemos que convertir esta información al tipo correcto de cada columna usando el método "astype()"')
+
+df[["bore", "stroke"]] = df[["bore", "stroke"]].astype("float")
+df[["normalized-losses"]] = df[["normalized-losses"]].astype("int")
+df[["price"]] = df[["price"]].astype("float")
+df[["peak-rpm"]] = df[["peak-rpm"]].astype("float")
+
+print("\n", df.dtypes)
+
+print('Estandarización de la información. La información es usualmente recolectada por diferentes agencias en diferentes formatos (Data standardization también es un termino para un normalización de un tipo de data donde restamos el promedio (mean) y dividimos por la desviación estándar (standard deviation)\n')
+
+print('Que es la estandarización?\nEstandarización es el proceso de transformar la información a un formato común, permitiendo le a los investigadores hacer comparaciones significativa\n')
+
+print('Ejemplo\nTransforma mpg (miles per gallon) a L/100km:')
+print('En nuestro data set las columnas de consumo de combustible son "city-mpg" y "highway-mpg" son presentadas como la unidad de medida mpg. Asumiendo que desarrollamos una aplicación que acepte como medida L/100km como estándar.\nNecesitaremos aplicar la transformación de la información de mpg a L/100km.\La formula de conversion es:\n L/100km = 235/mgp.\nPodemos hacer una gran variedad de operaciones matemáticas directamente en pandas')
+
+print(df.head())
+
+# Convert mpg to L/100km by mathematical operation (235 divided by mpg)
+df["city-L/100km"] = 235 / df["city-mpg"]
+
+# check your transformed data 
+print(df.head())
+
+#print(df["city-L/100km"])
