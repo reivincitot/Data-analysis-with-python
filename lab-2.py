@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 # indicando donde se encuentra la información guardada
 path = "D:/Curso ibm/Data analysis with python/automovil-dataset.csv"
@@ -139,14 +139,60 @@ print('Estandarización de la información. La información es usualmente recole
 print('Que es la estandarización?\nEstandarización es el proceso de transformar la información a un formato común, permitiendo le a los investigadores hacer comparaciones significativa\n')
 
 print('Ejemplo\nTransforma mpg (miles per gallon) a L/100km:')
+
 print('En nuestro data set las columnas de consumo de combustible son "city-mpg" y "highway-mpg" son presentadas como la unidad de medida mpg. Asumiendo que desarrollamos una aplicación que acepte como medida L/100km como estándar.\nNecesitaremos aplicar la transformación de la información de mpg a L/100km.\La formula de conversion es:\n L/100km = 235/mgp.\nPodemos hacer una gran variedad de operaciones matemáticas directamente en pandas')
 
 print(df.head())
 
 # Convert mpg to L/100km by mathematical operation (235 divided by mpg)
 df["city-L/100km"] = 235 / df["city-mpg"]
-
-# check your transformed data 
+df.rename(columns={'city-mpg': 'city-L/100km'})
+# check your transformed data
 print(df.head())
 
-#print(df["city-L/100km"])
+# Pregunta 2 de acuerdo al ejemplo de arriba , transformamos la columna mpg a L/100km
+df["highway-L/100km"] = 235 / df["highway-mpg"]
+
+# renombrando la columna highway-mpg a highwayL/100km
+df.rename(columns={'highway-mpg': 'highway-L/100km'}, inplace=True)
+print(df.head())
+
+print('Normalización de la información')
+
+print('Por que normalizar.\nNormalizar es el proceso de transformación de un numero de variables a un rango similar.\nTípicamente normalizar incluye escalar la variable para que el promedio de la variable sea 0, escalar la variable para que la variación sea 1, o escalar la variable para que el valor valla desde el rango 0 a 1.\n')
+
+print('Para demostrar la normalización, vamos a escalar las columnas "length","width" y "height".\n')
+
+print('Objetivo: Normalizar las variables para que el valor de sus rangos vallan de 0 a 1.\nAcercamiento: Reemplazar el valor original por (original value)/(maximum value)')
+
+df["length"] = df["length"]/df["length"].max()
+df["width"] = df["width"]/df["width"].max()
+
+# Pregunta 3 de acuerdo al ejemplo de arriba normaliza la columna height.
+df["height"] = df["height"]/df["height"].max()
+
+print("df[\"height\"]= df[\"height\"]/df[\"height\"].max()")
+print("df[[\"length\",\"width\",\"height\"]].head()")
+
+print(df[["length", "width", "height"]].head())
+print('\nAcá podemos ver normalizadas las columnas "length","width", "height" en el rango de 0 a 1\n')
+
+print("Binning\nBinning es el proceso de transformar continuamente numerosas variables y agruparlas en un contenedor \"bins\"")
+
+print("Ejemplo\nEn nuestro dataset \"horsepower\" es un valor real una variable que va entre los rangos 48 a 288 y tiene 59 valores únicos, que sucedería si queremos saber el rango de precio entre autos con muchos caballos de fuerza, una cantidad media de caballos de fuerza y aquellos que poseen pocos caballos de fuerza(3 tipos), podemos arreglarlos en tres diferentes contenedores o \"bins\" para simplificar el análisis\nUsaremos el método cut de pandas para segmentar en 3 la columna \"horsepower\"")
+
+print("Ejemplo de Binning en pandas\nConvertir la información al tipo correcto")
+
+df["horsepower"] = df["horsepower"].astype(int, copy=True)
+print("df[\"horsepower\"] = df[\"horsepower\"].astype(int, copy=True)\n")
+
+print("Vamos a trazar el histograma de \"horsepower\" para ver como luce su distribución")
+
+plt.hist(df["horsepower"])
+
+#agregar marcadores x/y y el titulo del trazado
+
+plt.xlabel("horsepower")
+plt.ylabel("count")
+plt.title("horsepowers bins")
+plt.show()
