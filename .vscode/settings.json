@@ -8,6 +8,9 @@
         "dataframe",
         "dtype",
         "dtypes",
-        "pyplot"
+        "idxmax",
+        "pyplot",
+        "xlabel",
+        "ylabel"
     ]
 }

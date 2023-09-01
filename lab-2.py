@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 path = "D:/Curso ibm/Data analysis with python/automovil-dataset.csv"
 
 # creando headers para el data frame con el que se trabajara
-headers1 = "symboling normalized-losses make fuel-type aspiration num-of-doors body-style drive-weels engine-location weel-base length width height curb-weight engine-type num-of-cylinders engine-size fuel-system bore stroke compression-ratio horsepower peak-rpm city-mpg highway-mpg price"
+headers1 = "symboling normalized-losses make fuel-type aspiration num-of-doors body-style drive-weals engine-location weal-base length width height curb-weight engine-type num-of-cylinders engine-size fuel-system bore stroke compression-ratio horsepower peak-rpm city-mpg highway-mpg price"
 
 # Separando los headers para que sean asignados a cada columna
 headers = headers1.split(" ")
@@ -18,23 +18,26 @@ filename = "automovil-dataset.csv"
 df = pd.read_csv(filename, names=headers)
 
 print('\nImprimiendo las 5 primeras filas del dataframe con sus respectivos headers\n')
+
 print(df.head())
 
-print('\ncomo podemos ver en el dataframe hay varias filas en el que se ve el singo "?", estos son missing values los cuales dificultaran nuestro análisis a futuro. Así que como lidiamos con la información faltante: pasos para trabajar con información faltante 1) identificar la información faltante 2) encargarse de la informacion faltante 3) corregir los formatos de la información')
+print('\ncomo podemos ver en el dataframe hay varias filas en el que se ve el singo "?", estos son missing values los cuales dificultaran nuestro análisis a futuro. Así que como lidiamos con la información faltante: pasos para trabajar con información faltante 1) identificar la información faltante 2) encargarse de la información faltante 3) corregir los formatos de la información')
 
 print('\nIdentificar y manejar valores faltante "Missing values" convirtiendo "?" a NaN,en el data set car, la información faltante viene como "?". Reemplazaremos "?" con NaN(Not a Number) acá usaremos  la función .replace(A, B, inplace = True)')
 
 df.replace("?", np.nan, inplace=True)
+
 print(df.head(5))
 
-print("\nEvaluación para información faltante, los valores faltantes son convertidos por default. Usaremos las siguientes funciones para identificar estos valores faltantes. hay dos metodos para detectar los valores faltantes 1) isnull()  2) notnull() la salida es un valor booleano si el valor pasado es efectivamente un valor faltante")
+print("\nEvaluación para información faltante, los valores faltantes son convertidos por default. Usaremos las siguientes funciones para identificar estos valores faltantes. hay dos métodos para detectar los valores faltantes 1) isnull()  2) notnull() la salida es un valor booleano si el valor pasado es efectivamente un valor faltante")
 
 missing_data = df.isnull()
+
 print(missing_data.head(5))
 
 print('\n"True" significa que el valor en la columna es un valor faltante, si el retorno es False significa que el valor no es un valor faltante')
 
-print('\nContar los valores faltantes en cada columna, usando un loop , podemos rápidamente darnos cuenta la cantidad de valores faltantes en cada columna, como mencionamos arriba  "True" representa un valor faltante y "False" significa que la column contiene un valor valido en el cuerpo de un loop for usaremos el metodo ".values_counts()" para contar el numero de valores "True"')
+print('\nContar los valores faltantes en cada columna, usando un loop , podemos rápidamente darnos cuenta la cantidad de valores faltantes en cada columna, como mencionamos arriba  "True" representa un valor faltante y "False" significa que la column contiene un valor valido en el cuerpo de un loop for usaremos el método ".values_counts()" para contar el numero de valores "True"')
 
 for column in missing_data.columns.values.tolist():
     print(column)
@@ -77,59 +80,86 @@ print('"price":4 valores perdidos, reemplazarlos con mean\n   Razón: precio es 
 print('\nCalculando el valor Medio (mean) para la columna "normalized-losses" ')
 
 avg_norm_loss = df["normalized-losses"].astype("float").mean(axis=0)
+
 print('\nAverage of normalized-losses: ', avg_norm_loss)
+
 print('\nRemplazando "NaN" con el valor medio en la columna "Normalized-losses"')
+
 df["normalized-losses"].replace(np.nan, avg_norm_loss, inplace=True)
 
 
 print('\nCalculando el valor medio para la columna "bore"')
+
 avg_bore = df["bore"].astype("float").mean(axis=0)
+
 print('Average of bore: ', avg_bore)
+
 print('\nReemplazando "NaN" con el valor medio de la columna "bore"')
+
 df['bore'].replace(np.nan, avg_bore, inplace=True)
 
 
 # Pregunta 1, basado en los ejemplos anteriores , reemplaza NaN in la columna "stroke" con el valor medio
 
 avg_stroke = df['stroke'].astype('float').mean(axis=0)
+
 print('\nAverage of stroke :', avg_stroke)
+
 print('\nReemplazando "NaN" con el valor medio de la columna "stroke"')
+
 print(df['stroke'].replace(np.nan, avg_stroke, inplace=True))
 
 # Calcula el valor medio de la columna "horsepower"
 avg_horsepower = df["horsepower"].astype("float").mean(axis=0)
+
 print('\nAverage of horsepower: ', avg_horsepower)
+
 print('\nReemplazando "NaN" con el valor medio de la columna "horsepower"')
+
 df["horsepower"].replace(np.nan, avg_horsepower, inplace=True)
 
 # Calcula el valor medio de la columna "Peak-rpm"
 avg_peak_rpm = df["peak-rpm"].astype("float").mean(axis=0)
+
 print("\nAverage peak-rpm:", avg_peak_rpm)
+
 print('\nReemplazando "NaN" con el valor medio de la columna "peak-rpm"')
+
 df["peak-rpm"].replace(np.nan, avg_peak_rpm, inplace=True)
 
 print('\nPara ver que valores están presentes en cada columna podemos usar el método ".value_counts()"')
+
 print(df["num-of-doors"].value_counts())
 
-print('Podemos ver que las cuatro puertas son el tipo mas común. Tambien podemos usar el metodo ".idemax()" para calcular el tipo mas comun')
+print('Podemos ver que las cuatro puertas son el tipo mas común. También podemos usar el método ".idxmax()" para calcular el tipo mas común')
+
 print(df["num-of-doors"].value_counts().idxmax())
+
 print('\nEl procedimiento de reemplazo es el mismo')
+
 df['num-of-doors'].replace(np.nan, "four", inplace=True)
 
 print('Finalmente desecharemos las columnas que no tienen ningún valor')
+
 df.dropna(subset=["price"], axis=0, inplace=True)
 
 df.reset_index(drop=True, inplace=True)
 
 print(df.head())
+
 print('\nCorregir el formato de la información')
 print('\nel ultimo paso en limpiar la información es asegurarnos que toda la información tenga el formato correcto (int,float,text u otro), en panda usamos: \n.dtype() para verificar el tipo de dato\n.astype() para cambiar el tipo de dato\n')
+
 print(df.dtypes)
+
 print('\nComo podemos ver arriba, algunas columnas no tiene el tipo correcto de dato.Variables numéricas deberían tener el tipo "float" o "int", variables con string deberían tener la categoría object, por ejemplo: "bore" y "stroke" son valores numéricos que describen el motor, asi que deberíamos esperar un tipo "float" o un tipo "int" pero son mostrados como tipo "object". Tenemos que convertir esta información al tipo correcto de cada columna usando el método "astype()"')
 
 df[["bore", "stroke"]] = df[["bore", "stroke"]].astype("float")
+
 df[["normalized-losses"]] = df[["normalized-losses"]].astype("int")
+
 df[["price"]] = df[["price"]].astype("float")
+
 df[["peak-rpm"]] = df[["peak-rpm"]].astype("float")
 
 print("\n", df.dtypes)
@@ -146,7 +176,9 @@ print(df.head())
 
 # Convert mpg to L/100km by mathematical operation (235 divided by mpg)
 df["city-L/100km"] = 235 / df["city-mpg"]
+
 df.rename(columns={'city-mpg': 'city-L/100km'})
+
 # check your transformed data
 print(df.head())
 
@@ -162,10 +194,10 @@ print('Normalización de la información')
 print('Por que normalizar.\nNormalizar es el proceso de transformación de un numero de variables a un rango similar.\nTípicamente normalizar incluye escalar la variable para que el promedio de la variable sea 0, escalar la variable para que la variación sea 1, o escalar la variable para que el valor valla desde el rango 0 a 1.\n')
 
 print('Para demostrar la normalización, vamos a escalar las columnas "length","width" y "height".\n')
-
 print('Objetivo: Normalizar las variables para que el valor de sus rangos vallan de 0 a 1.\nAcercamiento: Reemplazar el valor original por (original value)/(maximum value)')
 
 df["length"] = df["length"]/df["length"].max()
+
 df["width"] = df["width"]/df["width"].max()
 
 # Pregunta 3 de acuerdo al ejemplo de arriba normaliza la columna height.
@@ -189,10 +221,62 @@ print("df[\"horsepower\"] = df[\"horsepower\"].astype(int, copy=True)\n")
 print("Vamos a trazar el histograma de \"horsepower\" para ver como luce su distribución")
 
 plt.hist(df["horsepower"])
-
 #agregar marcadores x/y y el titulo del trazado
-
 plt.xlabel("horsepower")
 plt.ylabel("count")
 plt.title("horsepowers bins")
 plt.show()
+
+print("plt.hist(df[\"horsepower\"])\n#Agregando marcadores x/y y el titulo\plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"horsepower bins\")\nplt.show()")
+
+
+
+
+"Queremos tres contenedores de igual tamaño y ancho asi que usaremos numpy linspace(start_value, end_value, numbers_generated function.\nDado que queremos incluir el valor mínimo de horsepower, definiremos como start_value = min(df[\"horsepower\"])\nDado que queremos incluir el valor máximo de horsepower, definiremos como end_value = max(df[\"horsepower\"])\nDado que queremos 3 bins de igual largo, deben haber 4 divisores, asi que numbers_generated = 4\nCrearemos un bin array con un valor mínimo usando el ancho de banda calculado arriba. Los valores determinaran cuando un bind termina y cuando otro comienza.)"
+
+bins=np.linspace(min(df["horsepower"]),max(df["horsepower"]),4)
+print(bins)
+
+print("bins=np.linspace(min(df[\"horsepower\"]),max(df[\"horsepower\"]),4\nprint(bins)")
+
+#Definiendo el nombre de los grupos
+print("Definiendo el nombre de los grupos")
+
+group_names = ['Low', 'Medium', ' High']
+
+print("group_names = [\"Low\", \"Medium\,\"High\"]")
+
+#Aplicaremos la función "cut" para definir cada valor de df["horsepower"] pertenece.
+print("Aplicaremos la función \"cut\" para definir cada valor de df[\"horsepower\" pertenece.]")
+
+df["horsepower-binned"]= pd.cut(df["horsepower"], bins, labels= group_names,include_lowest=True)
+
+df[["horsepower","horsepower-binned"]].head(20)
+
+#Veamos el numero de vehículos en cada contenedor (bins)
+print("Veamos el numero de vehículos en cada contenedor (bins)")
+
+df["horsepower-binned"].value_counts()
+
+print("Tracemos la distribución de cada contenedor (bins)")
+
+plt.bar(group_names,df["horsepower-binned"].value_counts())
+print("plt.bar(group_names,df[\"horsepower-binned\"].value_counts()")
+
+plt.xlabel("horsepower")
+plt.ylabel("count")
+plt.title("horsepower bins")
+plt.show()
+
+print("plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"horsepower bins\")\nplt.show")
+
+print("Mira el dataframe arriba cuidadosamente. Encontraras que la ultima columna entrega el contenedor (bins) para \"horsepower\"basado en tres categorías (\"Low\", \"Medium\"),\"High\".\nAcotamos exitosamente el intervalo desde 59 a 3")
+
+print("Visualización de los contenedores (bins)\n")
+print("Normalmente, un histograma es usado para visualizar la distribución de los contenedores (bins) que creamos arriba")
+
+plt.xlabel("horsepower")
+plt.ylabel("count")
+plt.title("Horsepower bins")
+
+print("plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"Horsepower bins\")")
