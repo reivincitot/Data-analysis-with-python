@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# indicando donde se encuentra la información guardada
+# Indicando donde se encuentra la información guardada
 path = "D:/Curso ibm/Data analysis with python/automovil-dataset.csv"
 
-# creando headers para el data frame con el que se trabajara
+# Creando headers para el data frame con el que se trabajara
 headers1 = "symboling normalized-losses make fuel-type aspiration num-of-doors body-style drive-weals engine-location weal-base length width height curb-weight engine-type num-of-cylinders engine-size fuel-system bore stroke compression-ratio horsepower peak-rpm city-mpg highway-mpg price"
 
 # Separando los headers para que sean asignados a cada columna
@@ -17,87 +17,91 @@ filename = "automovil-dataset.csv"
 # creando el dataframe en donde juntamos el nombre del archivo con los headers creados mas arriba
 df = pd.read_csv(filename, names=headers)
 
-print('\nImprimiendo las 5 primeras filas del dataframe con sus respectivos headers\n')
+# Imprimiendo las 5 primeras filas del dataframe con sus respectivos headers
 
 print(df.head())
 
-print('\ncomo podemos ver en el dataframe hay varias filas en el que se ve el singo "?", estos son missing values los cuales dificultaran nuestro análisis a futuro. Así que como lidiamos con la información faltante: pasos para trabajar con información faltante 1) identificar la información faltante 2) encargarse de la información faltante 3) corregir los formatos de la información')
+# como podemos ver en el dataframe hay varias filas en el que se ve el singo "?", estos son missing values los cuales dificultaran nuestro análisis a futuro. Así que como lidiamos con la información faltante:
+# pasos para trabajar con información faltante 
+# 1) identificar la información faltante 
+# 2) encargarse de la información faltante 
+# 3) corregir los formatos de la información
 
-print('\nIdentificar y manejar valores faltante "Missing values" convirtiendo "?" a NaN,en el data set car, la información faltante viene como "?". Reemplazaremos "?" con NaN(Not a Number) acá usaremos  la función .replace(A, B, inplace = True)')
+# Identificar y manejar valores faltante "Missing values" convirtiendo "?" a NaN,en el data set car, la información faltante viene como "?". Reemplazaremos "?" con NaN(Not a Number) acá usaremos  la función .replace(A, B, inplace = True)')
 
 df.replace("?", np.nan, inplace=True)
 
 print(df.head(5))
 
-print("\nEvaluación para información faltante, los valores faltantes son convertidos por default. Usaremos las siguientes funciones para identificar estos valores faltantes. hay dos métodos para detectar los valores faltantes 1) isnull()  2) notnull() la salida es un valor booleano si el valor pasado es efectivamente un valor faltante")
+# Evaluación para información faltante, los valores faltantes son convertidos por default. Usaremos las siguientes funciones para identificar estos valores faltantes. 
+# Hay dos métodos para detectar los valores faltantes 1) isnull()  2) notnull() la salida es un valor booleano si el valor pasado es efectivamente un valor faltante")
 
 missing_data = df.isnull()
 
 print(missing_data.head(5))
 
-print('\n"True" significa que el valor en la columna es un valor faltante, si el retorno es False significa que el valor no es un valor faltante')
+# "True" significa que el valor en la columna es un valor faltante, si el retorno es False significa que el valor no es un valor faltante
 
-print('\nContar los valores faltantes en cada columna, usando un loop , podemos rápidamente darnos cuenta la cantidad de valores faltantes en cada columna, como mencionamos arriba  "True" representa un valor faltante y "False" significa que la column contiene un valor valido en el cuerpo de un loop for usaremos el método ".values_counts()" para contar el numero de valores "True"')
+#Contar los valores faltantes en cada columna, usando un loop , podemos rápidamente darnos cuenta la cantidad de valores faltantes en cada columna, como mencionamos arriba  "True" representa un valor faltante y "False" significa que la column contiene un valor valido en el cuerpo de un loop for usaremos el método ".values_counts()" para contar el numero de valores "True"
 
 for column in missing_data.columns.values.tolist():
     print(column)
     print(missing_data[column].value_counts())
     print("")
 
-print('\nBasado en el sumario de arriba cada columna tiene 205 filas y 7 columnas contienen valores faltante "missing values"')
-print('1. "normalized-losses": 41 missing data')
-print('2. "num-of-doors": 2 missing data')
-print('3. "bore": 4 missing data')
-print('4. "stroke": 4 missing data')
-print('5. "horsepower": 2 missing data')
-print('6. "peak-rpm": 2 missing data')
-print('7. "price": 4 missing data\n')
-print("\nManejando Missing data")
-print("1. Drop data")
-print("    a. desechar la fila completa")
-print("    b. desechar la columna completa")
-print("2. reemplazar información")
-print("    a. reemplazarla por significado")
-print("    b. reemplazarla por frecuencia")
-print("    c. reemplazarla basadas en otras funciones\n")
+# Basado en el sumario de arriba cada columna tiene 205 filas y 7 columnas contienen valores faltante "missing values"
+# 1. "normalized-losses": 41 missing data
+# 2. "num-of-doors": 2 missing data
+# 3. "bore": 4 missing data
+# 4. "stroke": 4 missing data
+# 5. "horsepower": 2 missing data
+# 6. "peak-rpm": 2 missing data
+# 7. "price": 4 missing data
+# Manejando Missing data
+# 1. Drop data
+#    a. desechar la fila completa
+#    b. desechar la columna completa
+# 2. reemplazar información
+#    a. reemplazarla por significado
+#    b. reemplazarla por frecuencia
+#    c. reemplazarla basadas en otras funciones
 
-print("Eliminar la columna completa solo sera usada en el caso de que a la columna le falten la mayoría de los valores, ninguna de la columnas cumple este parámetro así que contamos con completa libertad para elegir cualquier otro método de reemplazo")
+# Eliminar la columna completa solo sera usada en el caso de que a la columna le falten la mayoría de los valores, ninguna de la columnas cumple este parámetro así que contamos con completa libertad para elegir cualquier otro método de reemplazo
 
-print("\nReemplazando por el método mean: ")
-print('"normalized-losses": 41 valores perdidos, reemplazarlo con mean ')
-print('"stroke": 4 valores perdidos, reemplazarlos con mean')
-print('"bore": 4 valores perdidos, reemplazarlos con mean')
-print('"horsepower": 2 valores perdidos, reemplazarlos con mean')
-print('"peak-rpm": 2 valores perdidos, reemplazarlos con mean')
+# Reemplazando por el método mean: 
+# "normalized-losses": 41 valores perdidos, reemplazarlo con mean
+# "stroke": 4 valores perdidos, reemplazarlos con mean
+# "bore": 4 valores perdidos, reemplazarlos con mean
+# "horsepower": 2 valores perdidos, reemplazarlos con mean
+# "peak-rpm": 2 valores perdidos, reemplazarlos con mean
 
-print('\nReemplazar por frecuencia\n')
-print('"num-of-doors": 2 valores perdidos, reemplazarlos con mean\n     Razón: 84% de los sedans es de 4 puertas, dado que 4 puertas es lo mas frecuente, es mas probable que asi sea.\n')
+# Reemplazar por frecuencia
+# "num-of-doors": 2 valores perdidos, reemplazarlos con mean. 
+# Razón: 84% de los sedans es de 4 puertas, dado que 4 puertas es lo mas frecuente, es mas probable que asi sea.
 
+#Eliminar la columna completa
+# "price":4 valores perdidos, reemplazarlos con mean. 
+# Razón: precio es lo que queremos predecir
 
-print('Eliminar la columna completa\n')
-print('"price":4 valores perdidos, reemplazarlos con mean\n   Razón: precio es lo que queremos predecir')
-
-print('\nCalculando el valor Medio (mean) para la columna "normalized-losses" ')
+#Calculando el valor Medio (mean) para la columna "normalized-losses"
 
 avg_norm_loss = df["normalized-losses"].astype("float").mean(axis=0)
 
 print('\nAverage of normalized-losses: ', avg_norm_loss)
 
-print('\nRemplazando "NaN" con el valor medio en la columna "Normalized-losses"')
+# Remplazando "NaN" con el valor medio en la columna "Normalized-losses"
 
 df["normalized-losses"].replace(np.nan, avg_norm_loss, inplace=True)
 
-
-print('\nCalculando el valor medio para la columna "bore"')
+#Calculando el valor medio para la columna "bore"
 
 avg_bore = df["bore"].astype("float").mean(axis=0)
 
 print('Average of bore: ', avg_bore)
 
-print('\nReemplazando "NaN" con el valor medio de la columna "bore"')
+#Reemplazando "NaN" con el valor medio de la columna "bore"
 
 df['bore'].replace(np.nan, avg_bore, inplace=True)
-
 
 # Pregunta 1, basado en los ejemplos anteriores , reemplaza NaN in la columna "stroke" con el valor medio
 
@@ -105,7 +109,7 @@ avg_stroke = df['stroke'].astype('float').mean(axis=0)
 
 print('\nAverage of stroke :', avg_stroke)
 
-print('\nReemplazando "NaN" con el valor medio de la columna "stroke"')
+#Reemplazando "NaN" con el valor medio de la columna "stroke"
 
 print(df['stroke'].replace(np.nan, avg_stroke, inplace=True))
 
@@ -114,7 +118,7 @@ avg_horsepower = df["horsepower"].astype("float").mean(axis=0)
 
 print('\nAverage of horsepower: ', avg_horsepower)
 
-print('\nReemplazando "NaN" con el valor medio de la columna "horsepower"')
+#Reemplazando "NaN" con el valor medio de la columna "horsepower"
 
 df["horsepower"].replace(np.nan, avg_horsepower, inplace=True)
 
@@ -123,7 +127,7 @@ avg_peak_rpm = df["peak-rpm"].astype("float").mean(axis=0)
 
 print("\nAverage peak-rpm:", avg_peak_rpm)
 
-print('\nReemplazando "NaN" con el valor medio de la columna "peak-rpm"')
+#Reemplazando "NaN" con el valor medio de la columna "peak-rpm"
 
 df["peak-rpm"].replace(np.nan, avg_peak_rpm, inplace=True)
 
@@ -255,86 +259,70 @@ df["horsepower-binned"] = pd.cut(df["horsepower"],
 df[["horsepower", "horsepower-binned"]].head(20)
 
 # Veamos el numero de vehículos en cada contenedor (bins)
-print("Veamos el numero de vehículos en cada contenedor (bins)")
 
 df["horsepower-binned"].value_counts()
 
-print("Tracemos la distribución de cada contenedor (bins)")
+#Tracemos la distribución de cada contenedor (bins)
 
 plt.bar(group_names, df["horsepower-binned"].value_counts())
-print("plt.bar(group_names,df[\"horsepower-binned\"].value_counts()")
-
 plt.xlabel("horsepower")
 plt.ylabel("count")
 plt.title("horsepower bins")
 plt.show()
 
-print("plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"horsepower bins\")\nplt.show")
+#Mira el dataframe arriba cuidadosamente. Encontraras que la ultima columna entrega el contenedor (bins) para "horsepower" basado en tres categorías ("Low", "Medium","High"). Acotamos exitosamente el intervalo desde 59 a 3
 
-print("Mira el dataframe arriba cuidadosamente. Encontraras que la ultima columna entrega el contenedor (bins) para \"horsepower\"basado en tres categorías (\"Low\", \"Medium\"),\"High\".\nAcotamos exitosamente el intervalo desde 59 a 3")
-
-print("Visualización de los contenedores (bins)\n")
-print("Normalmente, un histograma es usado para visualizar la distribución de los contenedores (bins) que creamos arriba\n")
+#Visualización de los contenedores (bins)
+#Normalmente, un histograma es usado para visualizar la distribución de los contenedores (bins) que creamos arriba
 
 plt.hist(df["horsepower"], bins=3)
 plt.xlabel("horsepower")
 plt.ylabel("count")
 plt.title("Horsepower bins")
 
-print("plt.hist([\"horsepower\"],bins=3)")
-print("plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"Horsepower bins\")")
+#Indicador de variable (Dummy Variable)
+#Que es un indicador de variable.\nUn indicador de variable es una variable numérica usada para marcar categorías. Ellas son llamadas \"dummies\" por que los números en si no tienen ningún significado
 
-print("Indicador de variable (Dummy Variable)\n")
-print("Que es un indicador de variable.\nUn indicador de variable es una variable numérica usada para marcar categorías. Ellas son llamadas \"dummies\" por que los números en si no tienen ningún significado\n")
+#Por que usamos indicadores de variables?. Usamos indicadores de variables para poder usar variables de categoría para realizar un análisis de regresión en los módulos tardíos
 
-print("Por que usamos indicadores de variables?.\nUsamos indicadores de variables para poder usar variables de categoría para realizar un análisis de regresión en los módulos tardíos")
+#Ejemplo Podemos ver la columna "fuel-type" contiene dos valores únicos "gas" o "diesel". Regresión no entiende palabras solo números. Pra user este atributo en el análisis de regresión
+#Usaremos pandas con el método 'get_dummies' para asignar un valor numérico a los diferentes tipos de combustible 'fuel'
 
-print("Ejemplo\nPodemos ver la columna \"fuel-type\" contiene dos valores únicos \"gas\" o \"diesel\". Regresión no entiende palabras solo números. Pra user este atributo en el análisis de regresión")
-print("Usaremos pandas con el método \'get_dummies\' para asignar un valor numérico a los diferentes tipos de combustible \'fuel\'\n")
-
-print("df.columns\n")
 print(df.columns)
 
-print("obtener el indicador de la variable y asignarlo a un dataframe\n")
+#obtener el indicador de la variable y asignarlo a un dataframe")
 
-print("dummy_variable_1=pd.get_dummies(df[\"fuel-type\"])")
-print("dummy_variable_1.head()\n")
 dummy_variable_1=pd.get_dummies(df["fuel-type"])
 print(dummy_variable_1.head())
 
-print("Cambiar el nombre de las columnas para mayor claridad\n")
-
-print("dummy_variable_1.rename(columns={\'gas\':\'fuel-type\',\'diesel\':\'fuel-type\'}, inplace=True)")
-print("dummy_variable_1.head()\n")
+#Cambiar el nombre de las columnas para mayor claridad")
 
 dummy_variable_1.rename(columns={'gas':'fuel-type-gas', 'diesel': 'fuel-type-diesel'}, inplace=True)
+
 print(dummy_variable_1.head())
 
-print("En el dataframe, la columna \'fuel-type\' tiene valores para \'gas\' y \'diesel\' como 0s y 1s ahora\n")
-
-print("df = pd.concat([df, dummy_variable_1],axis=1)\n")
-
-print("df.drop(\'fuel-type\', axis=1, inplace=True)\n")
-print("df.head()")
+#En el dataframe, la columna 'fuel-type' tiene valores para 'gas' y 'diesel' como 0s y 1s ahora
 
 df = pd.concat([df, dummy_variable_1], axis=1)
+
 df.drop("fuel-type", axis=1, inplace=True)
+
 print(df.head())
 
-print("Pregunta 4 \nSimilar a lo anteriormente visto, crea un indicador de variable para la columna \'aspiration\'\n")
-
-print("dummy_variable_2 = pd.get_dummies(df[\'aspiration'])")
-print("dummy_variable_2.rename(columns={\'std\':\'aspiration-std\', \'turbo':\'aspiration-turbo\'},inplace= True)")
-print("dummy_variable_2.head()")
+#Pregunta 4 Similar a lo anteriormente visto, crea un indicador de variable para la columna 'aspiration'")
 
 dummy_variable_2 = pd.get_dummies(df["aspiration"])
+
 dummy_variable_1.rename(columns={'std':'aspiration-std', 'turbo':'aspiration-turbo'}, inplace=True)
+
 print(dummy_variable_2.head())
 
+#Pregunta 5, une el nuevo dataframe al dataframe original, luego descarta la columna 'aspiration'
 
-print("Pregunta 5, une el nuevo dataframe al dataframe original, luego descarta la columna \'aspiration\'")
 df= pd.concat([df, dummy_variable_2], axis=1)
+
 df.drop("aspiration",axis=1, inplace=True)
+
 print(df.head())
 
 df.to_csv("clean_df.csv")
