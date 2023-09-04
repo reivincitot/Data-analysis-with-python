@@ -221,7 +221,7 @@ print("df[\"horsepower\"] = df[\"horsepower\"].astype(int, copy=True)\n")
 print("Vamos a trazar el histograma de \"horsepower\" para ver como luce su distribución")
 
 plt.hist(df["horsepower"])
-#agregar marcadores x/y y el titulo del trazado
+# agregar marcadores x/y y el titulo del trazado
 plt.xlabel("horsepower")
 plt.ylabel("count")
 plt.title("horsepowers bins")
@@ -230,37 +230,38 @@ plt.show()
 print("plt.hist(df[\"horsepower\"])\n#Agregando marcadores x/y y el titulo\plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"horsepower bins\")\nplt.show()")
 
 
-
-
 "Queremos tres contenedores de igual tamaño y ancho asi que usaremos numpy linspace(start_value, end_value, numbers_generated function.\nDado que queremos incluir el valor mínimo de horsepower, definiremos como start_value = min(df[\"horsepower\"])\nDado que queremos incluir el valor máximo de horsepower, definiremos como end_value = max(df[\"horsepower\"])\nDado que queremos 3 bins de igual largo, deben haber 4 divisores, asi que numbers_generated = 4\nCrearemos un bin array con un valor mínimo usando el ancho de banda calculado arriba. Los valores determinaran cuando un bind termina y cuando otro comienza.)"
 
-bins=np.linspace(min(df["horsepower"]),max(df["horsepower"]),4)
+bins = np.linspace(min(df["horsepower"]), max(df["horsepower"]), 4)
 print(bins)
 
-print("bins=np.linspace(min(df[\"horsepower\"]),max(df[\"horsepower\"]),4\nprint(bins)")
+print(
+    "bins=np.linspace(min(df[\"horsepower\"]),max(df[\"horsepower\"]),4\nprint(bins)")
 
-#Definiendo el nombre de los grupos
+# Definiendo el nombre de los grupos
 print("Definiendo el nombre de los grupos")
 
 group_names = ['Low', 'Medium', ' High']
 
 print("group_names = [\"Low\", \"Medium\,\"High\"]")
 
-#Aplicaremos la función "cut" para definir cada valor de df["horsepower"] pertenece.
-print("Aplicaremos la función \"cut\" para definir cada valor de df[\"horsepower\" pertenece.]")
+# Aplicaremos la función "cut" para definir cada valor de df["horsepower"] pertenece.
+print(
+    "Aplicaremos la función \"cut\" para definir cada valor de df[\"horsepower\" pertenece.]")
 
-df["horsepower-binned"]= pd.cut(df["horsepower"], bins, labels= group_names,include_lowest=True)
+df["horsepower-binned"] = pd.cut(df["horsepower"],
+                                 bins, labels=group_names, include_lowest=True)
 
-df[["horsepower","horsepower-binned"]].head(20)
+df[["horsepower", "horsepower-binned"]].head(20)
 
-#Veamos el numero de vehículos en cada contenedor (bins)
+# Veamos el numero de vehículos en cada contenedor (bins)
 print("Veamos el numero de vehículos en cada contenedor (bins)")
 
 df["horsepower-binned"].value_counts()
 
 print("Tracemos la distribución de cada contenedor (bins)")
 
-plt.bar(group_names,df["horsepower-binned"].value_counts())
+plt.bar(group_names, df["horsepower-binned"].value_counts())
 print("plt.bar(group_names,df[\"horsepower-binned\"].value_counts()")
 
 plt.xlabel("horsepower")
@@ -273,10 +274,67 @@ print("plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"horsepower
 print("Mira el dataframe arriba cuidadosamente. Encontraras que la ultima columna entrega el contenedor (bins) para \"horsepower\"basado en tres categorías (\"Low\", \"Medium\"),\"High\".\nAcotamos exitosamente el intervalo desde 59 a 3")
 
 print("Visualización de los contenedores (bins)\n")
-print("Normalmente, un histograma es usado para visualizar la distribución de los contenedores (bins) que creamos arriba")
+print("Normalmente, un histograma es usado para visualizar la distribución de los contenedores (bins) que creamos arriba\n")
 
+plt.hist(df["horsepower"], bins=3)
 plt.xlabel("horsepower")
 plt.ylabel("count")
 plt.title("Horsepower bins")
 
+print("plt.hist([\"horsepower\"],bins=3)")
 print("plt.xlabel(\"horsepower\")\nplt.ylabel(\"count\")\nplt.title(\"Horsepower bins\")")
+
+print("Indicador de variable (Dummy Variable)\n")
+print("Que es un indicador de variable.\nUn indicador de variable es una variable numérica usada para marcar categorías. Ellas son llamadas \"dummies\" por que los números en si no tienen ningún significado\n")
+
+print("Por que usamos indicadores de variables?.\nUsamos indicadores de variables para poder usar variables de categoría para realizar un análisis de regresión en los módulos tardíos")
+
+print("Ejemplo\nPodemos ver la columna \"fuel-type\" contiene dos valores únicos \"gas\" o \"diesel\". Regresión no entiende palabras solo números. Pra user este atributo en el análisis de regresión")
+print("Usaremos pandas con el método \'get_dummies\' para asignar un valor numérico a los diferentes tipos de combustible \'fuel\'\n")
+
+print("df.columns\n")
+print(df.columns)
+
+print("obtener el indicador de la variable y asignarlo a un dataframe\n")
+
+print("dummy_variable_1=pd.get_dummies(df[\"fuel-type\"])")
+print("dummy_variable_1.head()\n")
+dummy_variable_1=pd.get_dummies(df["fuel-type"])
+print(dummy_variable_1.head())
+
+print("Cambiar el nombre de las columnas para mayor claridad\n")
+
+print("dummy_variable_1.rename(columns={\'gas\':\'fuel-type\',\'diesel\':\'fuel-type\'}, inplace=True)")
+print("dummy_variable_1.head()\n")
+
+dummy_variable_1.rename(columns={'gas':'fuel-type-gas', 'diesel': 'fuel-type-diesel'}, inplace=True)
+print(dummy_variable_1.head())
+
+print("En el dataframe, la columna \'fuel-type\' tiene valores para \'gas\' y \'diesel\' como 0s y 1s ahora\n")
+
+print("df = pd.concat([df, dummy_variable_1],axis=1)\n")
+
+print("df.drop(\'fuel-type\', axis=1, inplace=True)\n")
+print("df.head()")
+
+df = pd.concat([df, dummy_variable_1], axis=1)
+df.drop("fuel-type", axis=1, inplace=True)
+print(df.head())
+
+print("Pregunta 4 \nSimilar a lo anteriormente visto, crea un indicador de variable para la columna \'aspiration\'\n")
+
+print("dummy_variable_2 = pd.get_dummies(df[\'aspiration'])")
+print("dummy_variable_2.rename(columns={\'std\':\'aspiration-std\', \'turbo':\'aspiration-turbo\'},inplace= True)")
+print("dummy_variable_2.head()")
+
+dummy_variable_2 = pd.get_dummies(df["aspiration"])
+dummy_variable_1.rename(columns={'std':'aspiration-std', 'turbo':'aspiration-turbo'}, inplace=True)
+print(dummy_variable_2.head())
+
+
+print("Pregunta 5, une el nuevo dataframe al dataframe original, luego descarta la columna \'aspiration\'")
+df= pd.concat([df, dummy_variable_2], axis=1)
+df.drop("aspiration",axis=1, inplace=True)
+print(df.head())
+
+df.to_csv("clean_df.csv")
