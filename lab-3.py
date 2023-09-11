@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy import stats
 
 # Para descargar el archivo que usaremos en este lab puedes usar este link: "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DA0101EN-SkillsNetwork/labs/Data%20files/automobileEDA.csv\"
 
@@ -198,3 +199,199 @@ print(grouped_pivot)
 df_gptest2=df[['body-style', 'price']]
 grouped_test2 = df_gptest2.groupby(['body-style'],as_index=False)['price'].mean()
 print(grouped_test2,"\n")
+
+# Variables: Drive Wheels y Body Style vs Price.
+# Vamos a usar un mapa de calor para visualizar la relación entre Body Style y Price
+
+plt.pcolor(grouped_pivot, cmap="RdBu")
+plt.colorbar()
+#plt.show()
+
+# El mapa de calor traza la variable objetivo (precio) proporcional al color con respecto a las variables "rueda motriz" y "estilo de carrocería" en los ejes vertical y horizontal, respectivamente. Esto nos permite visualizar cómo se relaciona el precio con la "rueda motriz" y el "estilo de carrocería".
+
+# Los marcadores por defecto no proporcionan ninguna información util para nosotros, Vamos a cambiar eso
+
+fig, ax= plt.subplots()
+im = ax.pcolor(grouped_pivot, cmap="RdBu")
+
+#label names
+row_labels = grouped_pivot.columns.levels[1]
+col_labels = grouped_pivot.index
+
+#move ticks and labels to the center
+ax.set_xticklabels(row_labels, minor=False)
+ax.set_yticklabels(col_labels, minor= False)
+
+# Rotate label if too long
+plt.xticks(rotation=90)
+
+fig.colorbar(im)
+#plt.show()
+
+# Visualizar es muy importante en data science, y los paquetes de visualización de Python proveen una gran libertad. Continuaremos en mas profundidad en un curso separado de Python.
+
+# La pregunta principal que queremos contestar en este modulo es, "Cuales son las caracteristicas principales que afecta el precio de un vehículo"
+
+# Para tener una mejor medida de la importancia de las caracteristicas, miramos a la correlación de estas variables con el precio del vehículo, en otras palabras: Como depende el precio de este vehículo con esta variable
+
+# 5 Correlación y Causa
+# Correlación: Una medida del grado de independencia entre variables
+# Causation: La relación entre causa y efecto entre dos variables.
+# Es importante saber la diferencia entre estos dos. Correlación no implica causa. Determinar correlación es mas fácil que determinar la causa, la causa puede requerir hacer experimentos de forma independiente
+
+# Pearson Correlation. Pearson correlation mide la dependencia linear entre dos variables X y Y.
+# El coeficiente resultante es un valor entre -1 y 1 incluso donde:
+# 1: Correlación positiva perfecta
+# 0: Correlación no linear, estas dos variables casi no se afectan
+# -1: Correlación lineal negativa
+
+# Pearson correlation es el método por defecto de la función "corr". Como antes, podemos calcular Pearson correlation de las variables  "int64" o "float64".
+
+numeric_columns = df.select_dtypes(include=['number'])
+
+correlation_matrix = numeric_columns.corr()
+
+print(correlation_matrix,"\n")
+
+# Algunas veces nos gustaría saber el significado del estimado de la correlación.
+
+# P-value. Que es P-value? P-value es la probabilidad que la correlación entre estas dos variables tengan estadisticamente un significado. Normalmente, escogemos un significado de 0.05, lo que significa que estamos un 95% seguros o confiados que esa correlación entre las dos variables es significativa
+
+# Por convención cuando
+# P-value es < 0.001: decimos qye hay fuertes evidencias que la correlación es significativa.
+# P-value es < 0.05: hay una evidencia moderada que la correlación es significativa
+# P-value es 0.1: hay una evidencia débil que la correlación entre variable sea significativa
+# Podemos obtener esta información usando el módulo "stats" de la librería "scipy".
+# Wheel-Base vs Price
+# Vamos a calcular el coeficiente Pearson Correlation y P-value de "wheel-base" y precio
+
+pearson_coef, p_value = stats.pearsonr(df['wheel-base'],df['price'])
+print("El coeficiente de Pearson correlation es: ", pearson_coef, "junto al P-value de P =",p_value,"\n")
+
+print("Conclusión Dado que P-value es <0.001, la correlación entre wheel-base y price es estadisticamente significante, aunque la relación lineal no es extremadamente fuerte (~0.585)\n")
+
+# Horsepower vs Price vamos a calcular Pearson correlation y P-value de "horsepower" y "price".
+
+pearson_coef, p_value = stats.pearsonr(df['horsepower'],df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre horsepower y price es estadisticamente significativa, y la relación lineal entre es bastante fuerte (~0.809, cercano a 1)\n")
+
+# Length vs Price, vamos a calcular Pearson correlation y P-value de "length" y "price".
+
+pearson_coef, p_value = stats.pearsonr(df['length'],df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre length y price es estadisticamente significativa, y la relación lineal es moderadamente fuerte (~0.691)\n")
+
+# Width vs Price, vamos a calcular Pearson correlation y P-value de "width" y "price".
+
+pearson_coef, p_value= stats.pearsonr(df['width'],df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre width y price es estadisticamente significativa, y la relación lineal es bastante fuerte (~0.751)\n")
+
+# Curb-weight vs Price, vamos a calcular Pearson correlation y P-value de "curb-weight" y "price"
+
+pearson_coef, p_value= stats.pearsonr(df['curb-weight'],df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre curb-weight y price es estadisticamente significativa, y la relación lineal es bastante fuerte (~0.834)\n")
+
+# Engine-size vs Price, vamos calcular Pearson correlation y P-value de "engine-size" y "price"
+
+pearson_coef, p_value = stats.pearsonr(df['engine-size'], df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre engine-size y price es estadisticamente significativa, y la relación lineal es bastante fuerte (~0.872)\n")
+
+# Bore vs Price, vamos a calcular el coeficiente Pearson correlation y P-value de "bore" y "price".
+
+pearson_coef, p_value = stats.pearsonr(df['bore'],df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre bore y price es estadisticamente significativa, y la relación lineal es moderada (~0.521)\n")
+
+# City-mpg vs Price vamos a calcular el coeficiente Pearson correlation y P-value de "city-mpg" y "price"
+
+pearson_coef, p_value = stats.pearsonr(df['city-mpg'], df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre city-mpg y price es estadisticamente significativa, y la relación lineal es negativa y moderadamente fuerte (-0.687)\n")
+
+# Highway-mpg vs Price, vamos a calcular el coeficiente Pearson correlation y P-value de "highway-mpg" y "price"
+
+pearson_coef, p_value = stats.pearsonr(df['highway-mpg'],df['price'])
+
+print("El coeficiente de Pearson correlation es: ", pearson_coef,"junto con el P-value de P = ",p_value,"\n")
+
+print("Conclusion: Dado que P-value es < 0.001, la correlación entre highway-mpg y price es estadisticamente significativa, y la relación lineal es negativamente y moderadamente fuerte (-0.705)\n")
+
+# 6 ANOVA
+# ANOVA : Análisis de la varianza (Analysis of Variance)
+# El análisis de la varianza(ANOVA) es un método estadístico usado para probar si existen diferencias significativas entre las medidas de dos o mas grupos. ANOVA devuelve dos parámetros
+
+# F-test score: ANOVA asume que la media de todos los grupos es la misma, calcula cuanto es que se desvía la media verdadera de esta presunción y lo reporta como F-test score.Un resultado grande significa que hay una gran diferencia entre los dos promedios
+
+# P-value P-value te dice estadisticamente, cuan significativamente esta calculado nuestro valor
+
+# Si nuestra variable precio es significativamente estrecha con la variable que analizamos, esperamos que ANOVA devuelva un gran F-test y un pequeño P-value.
+
+# Drive wheels. Puesto que ANOVA analiza las diferencias entre diferentes grupos de la misma variable, la función groupby sera de gran ayuda. Puesto que ANOVA algorítmicamente promedia la información de forma automática
+
+grouped_test2 = df_gptest[['drive-wheels','price']].groupby(['drive-wheels'])
+print(grouped_test2.head(2),"\n")
+
+print(df_gptest)
+
+# Podemos obtener los valores del método group usando el método "get_group"
+
+print(grouped_test2.get_group('4wd')['price'])
+
+# Podemos usar la función "f_oneway" en el modulo "stats" para obtener el F-test score y P-value.
+
+#ANOVA
+f_val, p_val = stats.f_oneway(grouped_test2.get_group('fwd')['price'],grouped_test2.get_group('rwd')['price'], grouped_test2.get_group('4wd')['price'])
+print("Los resultados ANOVA: F= ", f_val,", P= ",p_val)
+
+# Este es un gran resultado con un resultado grande en F-test mostrando una correlación fuerte y un P-value casi 0 lo que implica una significación estadística casi segura. Pero, ¿significa esto que los tres grupos evaluados están tan altamente correlacionados?
+
+# Examinemos las por separado
+
+# fwd y rwd
+
+f_val, p_val = stats.f_oneway(grouped_test2.get_group('fwd')['price'],grouped_test2.get_group('rwd')['price'])
+
+print("Los resultados ANOVA para : F= ",f_val," P= ",p_val)
+
+# 4wd y rwd
+
+f_val,p_val= stats.f_oneway(grouped_test2.get_group('4wd')['price'],grouped_test2.get_group('rwd')['price'])
+
+print("Los resultados ANOVA para F= ", f_val,"P= ",p_val)
+
+# Conclusión : Variables importantes
+# Ahora tenemos una mejor idea de como luce cada información y que variables son importantes para tomar en cuenta cuando predecimos el valor de un vehículo y las hemos disminuido a las siguientes variables
+
+# Variables numéricas continuas (Continuous numerical variables):
+# Length
+# Width
+# Curb-weight
+# Engine-size
+# Horsepower
+# City-mpg
+# Highway-mpg
+# Wheel-Base
+# Bore
+
+# Variables categóricas (Categorical variables)
+
+# Drive-wheels
+# Ahora nos moveremos a construir un modelo de machine learning para automatizar el análisis, alimentando el modelo con las variables que significativamente afectan nuestra variable objetivo, lo que mejorara la performance de nuestro modelo de predicción

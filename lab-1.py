@@ -37,8 +37,8 @@ print(df.columns,"\n")
 
 #*******************Fin de la pregunta 2**************************************
 
-#guardar un dataset, panda nos permite guardar dataset en formato csv usando el metodo dataframe.to_csv(), puedes agregar un filepath y un nombre dentro de signos de exclamacion dentro del braquet
-#por ejemplo si deseas guardar el dataframe df como automovil.csv en tu maquina local, puedes usar el sintax escrito mas abajo, donde index = False significa que la fila nombres no sera escrita
+#guardar un dataset, panda nos permite guardar dataset en formato csv usando el método dataframe.to_csv(), puedes agregar un filepath y un nombre dentro de signos de exclamación dentro del bracket
+#por ejemplo si deseas guardar el dataframe df como automovil.csv en tu maquina local, puedes usar el syntax escrito mas abajo, donde index = False significa que la fila nombres no sera escrita
 
 df.to_csv("automovil.csv", index=False)
 
