@@ -16,6 +16,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error,r2_score
 
 filename = "D:/Curso ibm/Data analysis with python/automobileEDA.csv"
 df = pd.read_csv(filename,header=0)
@@ -311,3 +312,130 @@ pipe.fit(Z,y)
 
 ypipe = pipe.predict(Z)
 print(ypipe[0:10])
+
+# Media para una muestra de evaluación. Cuando evaluamos nuestro modelo, no solo queremos visualizar los resultados, también queremos una medida cuantitativa para determinar cuan certero es nuestro modelo. Dos importantes medidas que usualmente se usan en estadísticas para determinar la precisión del modelo:
+# R**/R-squared
+# Mean Squared Error (MSE)
+# R-squared
+# R squared, también conocido como determinación de coeficiente, es una medida que  indica cuan cerca esta la información de la linea de regresión
+# El valor de R-squared es el porcentaje de la variación de la variable respuesta (response) (y)  eso es explicado por el modelo lineal
+
+# Mean Squared Error (MSE)
+
+# Mean squared error mide el promedio de los cuadrados de los errores. es la diferencia entre  el valor actual (y) y el valor estimado (ŷ).
+
+# Modelo 1 Regresión lineal simple. Vamos a calcular el R^2:
+
+lm.fit(X,Y)
+print("El R-square es: ",lm.score(X,Y))
+
+# Podemos decir que ~49,659% de la variación del precio es explicado por este simple modelo lineal, el cual hemos construido usando la información de highway-mpg.
+
+# Calculemos el MSE:
+# Podemos predecir la salida i.e, "yhat" usando el método predict, donde X es el input de la variable
+
+Yhat=lm.predict(X)
+print("La salida de los primeros cuatro valores predecidos es: ", Yhat[0:4])
+
+# Importamos la función mean_square_error del modulo metrics(esta importada arriba junto con todas las importaciones)
+
+mse = mean_squared_error(df['price'],Yhat)
+print("La media de errores cuadrados de price y valor predictor es: ", mse)
+
+# Modelo 2: Regresión Lineal Multiple:
+# Vamos a calcular R^2
+
+lm.fit(Z,df['price'])
+r2=lm.score(Z,df['price'])
+print("El valor de R^2 es: ", r2)
+
+# Podemos decir que ~80,896% de la variación de precio es explicada por multiples regresiones lineales "multi_fit"
+# Vamos a calcular el MSE:
+# Producimos una predicción:
+
+Y_predict_multifit = lm.predict(Z)
+
+# Comparamos los valores predecidos con los resultados actuales:
+m2e = mean_squared_error(df['price'], Y_predict_multifit) 
+print("El promedio de errores cuadráticos de price y el valor predecido usando multifit es: ", m2e)
+
+# Modelo 3 Ajuste polynomial. Vamos a calcular R^2, importaremos la función r2_score del modulo metrics ya que estamos usando una función diferente
+# Aplicamos la función para obtener el valor de R^2
+r_squared = r2_score(y,p(x))
+print("El valor de R-square es: ", r_squared)
+
+# Podemos decir que ~67,419%de la variación de precio es explicado por este ajuste polynomial (Polynomial fit)
+
+# MSE
+# También podemos calcular el valor de MSE
+print(mean_squared_error(df['price'],p(x)))
+
+# Predicción y toma de decisiones
+# Predicción
+# En la sección previa, entrenamos el modelo usando el método fit. Ahora usaremos el método predict para producir una predicción. importaremos pyplot, también usaremos algunas funciones de numpy
+
+new_input = np.arange(1,100,1).reshape(-1,1)
+
+# ajustando el modelo:
+lm.fit(X,Y)
+print(lm)
+
+# Produciendo una predicción:
+Yhat = lm.predict(new_input)
+print(Yhat[0:5])
+
+# Podemos entramar la información:
+
+plt.plot(new_input,Yhat)
+plt.show()
+
+# Toma de decisiones: Determinar un buen modelo
+
+# Ahora que hemos visualizado los diferentes modelos y generar los valores de R-squared y el MSE para ajustarlos, como determinamos un buen modelo?
+
+# Que es un buen valor de R-squared?
+# Cuando comparas modelos, el modelo con el mayor valor de R-squared es el que se ajusta mejor, para la información
+
+# Que es un buen MES?
+# Cuando comparas modelos, el modelo con el menor valor SME es el mas ajustado para la información
+
+# Miremos los valores de diferentes modelos
+# Simple Linear Regression: Usando highway-mpg como variable predictora de Price.
+
+# R-squared: 0,49659118843391759
+# MSE: 3,16 * 10^7
+
+# Multiple Linear Regression: Usando horsepower, Curb-weight,Engine-size y Highway-mpg como variables predictoras de Price
+
+# R-squared: 0,80896354913783497
+# MSE: 1,2 X 10^7
+
+# Polynomial Fit: Usando Highway-mpg como variable predictora de Price
+
+# R-squared: 0,6741946663906514
+# MSE: 2,05 X 10^7
+
+# Simple Linear Regression model (SLR) vs Multiple Linear Regression model (MLR)
+# Usualmente, entre mas variables tengas, mejor tu modelo es prediciendo, pero esto no es siempre cierto. A veces no tendrás suficiente información, te encontraras con problemas numéricos, o muchas de las variables no serán útiles o incluso actuaran como ruido. Como resultado tu siempre deberás revisar el MSE y el R^2
+
+# Para comparar el resultado de los modelos MLR vs SLR, miramos a la combinación de los dos R-squared y MSE para tener la mejor conclusión acerca del ajuste del modelo
+
+# MSE: El MSE de SLR es 3,16 x 10^7 mientras que MLR tiene un MSE DE 1,2,X 10^7 el MSE de MLR es mas pequeño
+# R-squared: en este caso, podemos ver que hay una gran diferencia entre el R-squared de SLR y el de MLR, el R-squared de SLR es (~0,497), bastante pequeño comparado con el R-squared de MLR(~0,809)
+
+# Este R-squared en combinación con el MSE  muestra que MLR en este caso es un mejor modelo comparado con SLR
+
+# Simple Linea Model (SLR) vs Polynomial fit
+
+# MSE: podemos ver que Polynomial fit echo abajo el MSE, dado que el MSE es pequeño comparado con el SLR
+# R-squared El R-squared para Polynomial fit es mas grande que el R-squared de SLR, asi que Polynomial fit llevo hacia arriba el R-squared un poco
+
+# Dado que Polynomial fit resulto en un bajo MSE y un alto R-squared, podemos concluir que esto fue mejor ajustado que un Simple Linear Regression para predecir "price" con "highway-mpg" como variable predictora
+
+# Multiple Linea Regression (MLR) vs Polynomial Fit
+
+# MSE: el MSE para MLR es pequeño que el MSE de Polynomial Fit
+# R-squared: El R-squared para el MLR es también mucho mas grande que el de Polynomial fit
+
+# Conclusión:
+# Comparando estos tres modelos, podemos concluir que el modelo MLR es el mejor modelo, para poder predecir price de nuestro dataset. Estos resultados tienen sentido ya que tenemos 27 variables y sabemos que mas de una variable son potenciales predictores del precio final del car
