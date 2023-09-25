@@ -73,7 +73,7 @@ x_data = df.drop('price', axis=1)
 # Ahora de forma al azar dividimos la información en información de entrenamiento y prueba, usando la función train_test_split.
 # from sklearn.model_selection import train_test_split
 
-x_train, x_test, y_train, y_test = train_test_split(x_data,y_data,test_size=0.10, random_state=1)
+x_train, x_test, y_train, y_test = train_test_split(x_data,y_data,test_size=0.1, random_state=1)
 
 print("\nNumero de muestras de prueba: ",x_test.shape[0])
 print("Numero de muestras de entrenamiento: ",x_train.shape[0],"\n")
@@ -108,7 +108,7 @@ print(y,"\n")
 
 #-----------------------Pregunta 2
 # Encuentra el R^2 en el dataset usando el 40% del data set para pruebas
-x_train2,x_test2,y_train2,y_test2 = train_test_split(x_data,y_data, test_size=0.4, random_state=0)
+x_train2,x_test2,y_train2,y_test2 = train_test_split(x_data,y_data, test_size=0.4, random_state=1)
 
 lre.fit(x_train2[['horsepower']],y_train2)
 y = lre.score(x_test2[['horsepower']],y_test2)
@@ -180,7 +180,7 @@ DistributionPlot(y_test,yhat_test,"Valores actuales(Test)","Valores predecidos(T
 # Overfitting: El sobreajuste ocurre cuando el modelo se ajusta al ruido, pero no al proceso subyacente. Por lo tanto, al probar tu modelo utilizando el conjunto de pruebas, tu modelo no funciona tan bien, ya que está modelando el ruido, no el proceso subyacente que generó la relación. Creemos un modelo polinómico de grado 5.
 # Vamos a usar el 55% de la información para entrenamiento y el resto para pruebas
 
-x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.55, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.05, random_state=0)
 
 # Realizaremos una transformación polynomial de 5 grado en la característica "horsepower"
 
@@ -201,9 +201,9 @@ print(yhat[0:5])
 
 print("Predicted values:", yhat[0:4])
 print("True values:", y_test[0:4].values)
-# Usaremos la función "Pollyplot" que definimos al comienzo del lab para mostrar la información de entrenamiento, información de prueba, y la función predecida
+# Usaremos la función "Pollyplot" que definimos al comienzo del lab para mostrar la información de entrenamiento, información de prueba, y la función predecída
 
-#PollyPlot(x_train['horsepower'], x_test['horsepower'], y_train, y_test, poly, pr)
+PollyPlot(x_train['horsepower'], x_test['horsepower'], y_train, y_test, poly, pr)
 
 # Figura 3: Un modelo de regresión polynomial donde los puntos rojos representan la información de entrenamiento, los puntos verdes representan la información de prueba, y la linea azul representa la predicción del modelo. Podemos ver que la función estimada aparece para seguir la información al rededor de los 200 horsepower, la función comienza a diverger de los puntos de información
 
@@ -216,7 +216,7 @@ print(poly.score(x_test_pr,y_test))
 
 # Vemos que el R^2 para la información de entrenamiento es 0.5567 mientras que el R^2 de la información de prueba fue -29.87. Entre mas bajo el R^2 peor el modelo. Un R^2 negativo es un signo de overfitting
 
-# Veamos como el R^2 cambia la información de prueba para diferentes orden polynomial y el grafico como resultado
+# Veamos como el R^2 cambia la información de prueba para diferentes orden polynomial y el gráfico como resultado
 
 Rsqu_test = []
 
@@ -236,4 +236,44 @@ plt.plot(order,Rsqu_test)
 plt.xlabel('order')
 plt.ylabel('R^2')
 plt.title('R^2 Usando información de Prueba')
-plt.text(3,0.75,'R^2 Maximo')
+plt.text(3,0.75,'R^2 Máximo')
+plt.show()
+plt.close()
+
+#Podemos ver que el R^2 gradualmente aumenta hasta un polinomio de 3 orden es usado. Entonces, el  R^2 dramáticamente decae hasta un polinomio de 4 orden
+# La siguiente función sera usada en la siguiente sección 
+def f(order, test_data):
+    x_train, x_test, y_train, y_test= train_test_split(x_data,y_data, test_size=test_data, random_state=0)
+    pr = PolynomialFeatures(degree=order)
+    x_train_pr = pr.fit_transform(x_train([['horsepower']]))
+    x_test_pr = pr.fit_transform(x_test[['horsepower']])
+    poly = LinearRegression()
+    poly.fit((x_train_pr, y_train))
+    PollyPlot(x_train['horsepower'], x_test['horsepower'],y_train,y_test, poly,pr)
+
+# La siguiente interface nos permite experimentar con diferentes ordenes polinomiales y diferentes volúmenes de información
+
+interact(f, order=(0,6,1), test_data=(0.05, 0.95, 0.05))
+# Pregunta 4 a): Podemos realizar la transformación polinomial con uno o mas caracteristicas. Crea una "PolynomialFeatures" objeto "pr1" de grado 2
+
+pr1= PolynomialFeatures(degree=2)
+
+# Pregunta 4 b): Transforma las muestras de entrenamiento y pruebas en las caracteristicas "horsepower", "cur-weight", "engine-size" y "high-way-mpg", pista: usa el método "fit_transform"
+
+x_train_pr1 = pr1.fit_transform(x_train[['horsepower','curb-weight','engine-size','highway-mpg']])
+x_test_pr1 = pr1.fit_transform(x_train[['horsepower','curb-weight','engine-size','highway-mpg']])
+
+# Pregunta 4 c): Cuantas dimensiones tiene la nueva característica? pista: usa el atributo "shape"
+
+print(x_train_pr1.shape)
+
+# Pregunta 4 d): Crea una Regresión lineal  modelo "poly1". Entrena el objeto usando "fit" usando las caracteristicas polinomiales
+
+poly1 = LinearRegression().fit(x_train_pr1,y_train)
+
+# Pregunta 4 e): Usa el método "predict" para predecir una salida de las caracteristicas polinomiales, entonces usa la función "DistributionPlot" para mostrar la distribución de las pruebas predecidas vs la información actual de pruebas
+
+yhat_test1= poly1.predict(x_test_pr1)
+
+Title = 'Distribution Plot of Predicted Value Using Test Data vs Data Distribution of Test Data'
+DistributionPlot(y_test,yhat_test1,'Actual Values (Test)','Predicted Values (Test)',Title)
