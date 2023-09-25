@@ -14,9 +14,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from ipywidgets import interact, interactive,fixed,interact_manual
-from sklearn.model_selection import train_test_split,cross_val_score, cross_val_predict
-from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split,cross_val_score, cross_val_predict,GridSearchCV
+from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.preprocessing import PolynomialFeatures
+from tqdm import tqdm
+
 
 path = 'https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DA0101EN-SkillsNetwork/labs/Data%20files/module_5_auto.csv'
 df = pd.read_csv(path)
@@ -144,7 +146,7 @@ print("La media de R^2 usando horsepower como característica es: ",Rcross2.mean
 yhat = cross_val_predict(lre, x_data[['horsepower']],y_data,cv=4)
 print(yhat[0:5])
 
-##########################################-Parte dos, Overfitting, Underfitting y Model selection
+##########################################-Parte 2, Overfitting, Underfitting y Model selection
 
 # Resulta que la información de prueba, algunas veces se menciona como "out sample data", es una mucho mejor medida de cuan bien lo esta haciendo nuestro modelo en la vida real uan de estas razones es el overfitting
 # Creemos el objeto Multiple linear regression y entrenemos el modelo usando "horsepower","curb-weight", "engine-size", y "highway-mpg" como caracteristicas
@@ -277,3 +279,122 @@ yhat_test1= poly1.predict(x_test_pr1)
 
 Title = 'Distribution Plot of Predicted Value Using Test Data vs Data Distribution of Test Data'
 DistributionPlot(y_test,yhat_test1,'Actual Values (Test)','Predicted Values (Test)',Title)
+
+# Pregunta 4 f): Usando el gráfico de distribución de arriba, Describa en palabras las dos regiones donde la predicción de "price" es menos precisa que los valores actuales de price
+
+print("The predicted value is higher than actual value for cars where the price $10,000 range, conversely the predicted price is lower than the price cost in the $30,000 to $40,000 range. As such the model is not as accurate in these ranges.")
+
+################################################### Parte 3
+
+# En esta sección, veremos Ridge Regression y como el parámetro alpha cambia el modelo. Nota, aca nuestra información de prueba sera usada como información de validación
+
+# Vamos a realizar una transformación polinomial de grado 2 en nuestra información
+
+pr=PolynomialFeatures(degree=2)
+x_train_pr=pr.fit_transform(x_train[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg','normalized-losses','symboling']])
+x_test_pr=pr.fit_transform(x_test[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg','normalized-losses','symboling']])
+
+# Importaremos Ridge desde el modulo lineal models.
+# from sklearn.lineal_model import Ridge
+
+# Vamos a crear un objeto Ridge Regression y ajustar el parámetro de regularización (alpha) a 1
+
+RigeModel = Ridge(alpha=1)
+
+# Como una expresión regular Puedes ajustar el modelo usando el método fit
+
+x = RigeModel.fit(x_train_pr,y_train)
+print(x)
+
+# Similarmente, puedes obtener una predicción 
+yhat = RigeModel.predict(x_test_pr)
+
+# Vamos a comparar las primeras cuatro muestras predecidas de nuestro test
+
+print('predicted: ', yhat[0:4])
+print('test set: ', y_test[0:4].values)
+
+# Seleccionamos el valor de alpha que minimiza los errores en el test. para hacer eso, podemos utilizar un for loop. También podemos crear una barra de progreso para ver cuantas iteraciones ha completado hasta el momento
+
+Rsqu_test = []
+Rsqu_train = []
+dummy1 = []
+Alpha = 10 * np.array(range(0,1000))
+pbar = tqdm(Alpha)
+
+for alpha in pbar:
+    RigeModel = Ridge(alpha=alpha)
+    RigeModel.fit(x_train_pr, y_train)
+    test_score, train_score = RigeModel.score(x_test_pr,y_test), RigeModel.score(x_train_pr, y_train)
+
+    pbar.set_postfix({"Test score": test_score,"Train score":train_score})
+
+    Rsqu_test.append(test_score)
+    Rsqu_train.append(train_score)
+
+width = 12
+height = 10
+plt.figure(figsize=(width,height))
+
+plt.plot(Alpha,Rsqu_test, label='Validation Data')
+plt.plot(Alpha,Rsqu_train, 'r', label='training Data')
+plt.xlabel('alpha')
+plt.ylabel('R^2')
+plt.legend()
+plt.show()
+
+# Figura 4 la linea azul representa el R^2 de la información de validación, y la linea roja representa el R^2 de la linea de entrenamiento. El eje-x representa la diferencia entre los valores de Alpha
+
+# Acá el modelo es construido y probado con la misma información, asi que el entrenamiento y prueba son la misma información
+
+# La linea roja en la Figura 44 representa el R^2 de la información de entrenamiento. Como Alpha incrementa, El R^2 disminuye. Por lo tanto mientras Alpha incrementa, el modelo tiene un peor desempeño con la información de entrenamiento
+
+# La linea azul representa el R^2 de la información de validación, Como el valor de Alpha aumenta, el R^2 incrementa y converge al mismo punto
+
+# ---------------------------------------Pregunta 5
+# Realiza una Regresión Ridge. Calcula el R^2 usando las caracteristicas polinomiales, usa la información de entrenamiento para entrenar el modelo y usa la información de prueba para probar el modelo. el parámetro alpha debe ser de 10
+
+RigeModel= Ridge(alpha=10)
+x=RigeModel.fit(x_train_pr,y_train)
+y=RigeModel.score(x_test_pr,y_test)
+print(x)
+print(y)
+
+############################################### Parte 4 Grid search
+# El termino alpha es un hyperparametro. Sklearn tiene una clase GidSearchCV para hacer el proceso de encontrar el mejor parámetro simple
+
+# Vamos a importar GridSearchCV desde el modulo model_selection
+# from sklearn.model_selection import GridSearchCV
+
+parameters1= [{'alpha':[0.001,0.1,1,10,100,1000,10000,100000,1000000]}]
+print(parameters1)
+
+# Crea un objeto Ridge Regression
+RR = Ridge()
+print(RR)
+
+# Crea el objet de búsqueda Ridge Regression
+
+Grid1 = GridSearchCV(RR,parameters1, cv=4)
+
+# Ajustar el modelo
+Grid1.fit(x_data[['horsepower','curb-weight','engine-size','highway-mpg']], y_data)
+
+# El objeto encuentra los mejores parámetros en la información de validación. Podemos obtener el estimador con los mejores parámetros y asignarlos la variable BestRR como a continuación
+
+BestRR= Grid1.best_estimator_
+print(BestRR)
+
+BestRR.score(x_test[['horsepower','curb-weight','engine-size','highway-mpg']],y_test)
+
+#---------------------------------------------- Pregunta 6
+
+# Realiza un Grid search para el parámetro alpha y el parámetro normalización , entonces encuentra el mejor valor de los parámetros
+
+parameters2 = [{'alpha':[0.001, 0.1, 1, 10, 100, 1000, 10000, 100000, 100000]}]
+
+Grid2= GridSearchCV(Ridge(), parameters2,cv=4)
+Grid2.fit(x_data[['horsepower','curb-weight','engine-size','highway-mpg']], y_data)
+best_alpha = Grid2.best_params_['alpha']
+best_ridge_model = Ridge(alpha= best_alpha)
+best_ridge_model.fit(x_data[['horsepower','curb-weight','engine-size','highway-mpg']],y_data)
