@@ -253,8 +253,7 @@ print("group_names = [\"Low\", \"Medium\,\"High\"]")
 print(
     "Aplicaremos la función \"cut\" para definir cada valor de df[\"horsepower\" pertenece.]")
 
-df["horsepower-binned"] = pd.cut(df["horsepower"],
-                                 bins, labels=group_names, include_lowest=True)
+df["horsepower-binned"] = pd.cut(df["horsepower"],bins, labels=group_names, include_lowest=True)
 
 df[["horsepower", "horsepower-binned"]].head(20)
 
